@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- your app's js -->
+    <script src="js/app.js"></script>
+  </head>
+  <body ng-app="starter" ng-controller="ExpenseController">
+
+    <ion-header-bar class="bar-energized">
+        <h1 class="title">Expenses</h1>
+        <button class="button button-icon ion-plus" ng-click="addTransaction()">
+
+        </button>
+    </ion-header-bar>
+    <!-- Total list of Expenses -->
+    <ion-content>
+        <ion-list>
+            <ion-item ng-repeat="expense in Expenses" class="item-text-wrap">
+                <h2>{{expense.paid_to}}</h2>
+                <span ng-class="(GetCurrentUserID()==expense.user_id)? 'badge badge-balanced': 'badge badge-assertive'">{{expense.amount | currency:'$':0}}</span>
+                <!--<p>{{GetNameFromId(expense.paid_by)+ ' : ' + expense.date}}</p>-->
+                <p>{{expense.user_id + ' : ' + expense.date}}</p>
+
+            </ion-item>
+        </ion-list>
+    </ion-content>
+
+    <!-- Form input -->
+    <script id="new-task.html" type="text/ng-template">
+
+        <div class="modal">
+
+            <!-- Modal header bar -->
+            <ion-header-bar class="bar-secondary">
+                <h1 class="title">New Transaction</h1>
+                <button class="button button-clear button-positive" ng-click="closeNewTransaction()">Cancel</button>
+            </ion-header-bar>
+
+            <!-- Modal content area -->
+            <ion-content>
+
+                <form ng-submit="saveTransaction(transaction)">
+                    <div class="list">
+                        <label class="item item-input">
+                            <input type="date" placeholder="Date" ng-model="transaction.date">
+                        </label>
+                        <label class="item item-input">
+                            <input type="number" placeholder="Amount" ng-model="transaction.amount">
+                        </label>
+                        <label class="item item-input">
+                            <input type="text" placeholder="Title" ng-model="transaction.paid_to">
+                        </label>
+                    </div>
+                    <div class="padding">
+                        <button type="submit" class="button button-block button-positive">Save Payment</button>
+                    </div>
+                </form>
+
+            </ion-content>
+
+        </div>
+
+    </script>
+  </body>
+</html>
