@@ -9,10 +9,13 @@ angular.module('starter', ['ionic'])
         $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
 
 
-        var url = "http://www.suniltimalsina.com/apps/index.php";
-        $http.get(url)
+        var urlHome = "http://projects.suniltimalsina.com";
+        $http.get(urlHome + "/fetch.php")
             .success(function(response){
                 $scope.Expenses = response;
+            }).
+            error(function(response){
+                console.log("Error:"+response);
             });
 
     $scope.transactions = [];
@@ -37,7 +40,7 @@ angular.module('starter', ['ionic'])
                 amount: ""+transaction.amount,
                 detail: ""+transaction.detail
             };
-            $http.post("http://suniltimalsina.com/apps/submit.php", newData).
+            $http.post(urlHome + "/submit.php", newData).
                 success(function(data, status, headers, config){
                     console.log('Success data submission! Data:'+data);
                 }).
