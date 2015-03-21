@@ -4,15 +4,68 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 angular.module('starter', ['ionic'])
-
+.config(function($stateProvider, $urlRouterProvider){
+    $stateProvider
+        .state('login', {
+            url: '/login',
+            templateUrl: 'templates/login.html',
+            controller: 'LoginController'
+        })
+        .state('home', {
+            url: '/expenseList',
+            templateUrl: 'templates/expenses.html',
+            controller: 'ExpenseController'
+        });
+    $urlRouterProvider.otherwise('/expenseList');
+})
+.controller('ProtectedController', function($scope, $location, $ionicHistory){
+    if(window.localStorage.getItem("password") === "undefined" || window.localStorage.getItem("password") === null) {
+        $ionicHistory.nextViewOptions({
+            disableAnimate: true,
+            disableBack: true
+        });
+        $location.path("/login");
+    }
+    $scope.status = "Making it this far means you are signed in";
+})
+.controller('LoginController', function($scope, $location, $ionicHistory){
+    $scope.login = function(username, password) {
+        window.localStorage.setItem("username", username);
+        window.localStorage.setItem("password", password);
+        $ionicHistory.nextViewOptions({
+            disableAnimate: true,
+            disableBack: true
+        });
+        $location.path("/protected");
+    }
+})
 .controller('ExpenseController', function($scope, $http, $ionicModal, $filter){
         $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
 
+        //Checking if username and password is saved
+        if(window.localStorage.getItem("password") === "undefined" || window.localStorage.getItem("password") === null) {
+            $ionicHistory.nextViewOptions({
+                disableAnimate: true,
+                disableBack: true
+            });
+            console.log("No password is saved in local storage!");
+            $location.path("/login");
+        }
+
+        if(window.localStorage.getItem("username") === "undefined" || window.localStorage.getItem("username") === null) {
+            $ionicHistory.nextViewOptions({
+                disableAnimate: true,
+                disableBack: true
+            });
+            $location.path("/login");
+            console.log("No username is saved in local storage!");
+        }
 
         var urlHome = "http://projects.suniltimalsina.com";
         $http.get(urlHome + "/fetch.php")
             .success(function(response){
-                $scope.Expenses = response;
+                $scope.Users = response.users;
+                $scope.Expenses = response.data;
             }).
             error(function(response){
                 console.log("Error:"+response);
@@ -32,9 +85,8 @@ angular.module('starter', ['ionic'])
 
         $scope.saveTransaction = function(transaction){
             var newData = {
-                transaction_id: "0",
-                user_id: "001",
-                user_name: "Ram Prasad",
+                user_id: ""+$scope.GetCurrentUserID(),
+                user_name: ""+$scope.GetCurrentUserName(),
                 paid_to: ""+transaction.paid_to,
                 date:  $filter('date')(transaction.date, "yyyy-MM-dd"),
                 amount: ""+transaction.amount,
@@ -52,41 +104,5 @@ angular.module('starter', ['ionic'])
             transaction.user_id = "";
         };
 
-        //Open our new transaction modal
-
-        $scope.addTransaction = function() {
-          $scope.transactionModal.show();
-        };
-
-        //Close the new transaction modal
-        $scope.closeNewTransaction = function(){
-            $scope.transactionModal.hide();
-        };
-
-    $scope.Users = [
-        {
-            id: 123,
-            name: 'Ram Prasad'
-        },
-        {
-            id : 007,
-            name: 'Shyam prasad'
-        }
-    ];
-    $scope.GetNameFromId = function(searchID){
-        console.log('Searching for '+ searchID);
-
-        for(i = 0; i<$scope.Users.length; i++)
-        {
-            if($scope.Users[i].id === searchID){
-                return $scope.Users[i].name;
-            }
-        }
-    };
-
-    $scope.GetCurrentUserID = function(){
-        /* TODO : make this to return actual ID*/
-        return 007;
-    }
   });
 
