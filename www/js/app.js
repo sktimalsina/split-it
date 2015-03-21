@@ -39,7 +39,7 @@ angular.module('starter', ['ionic'])
         $location.path("/protected");
     }
 })
-.controller('ExpenseController', function($scope, $http, $ionicModal, $filter){
+.controller('ExpenseController', function($scope, $http, $ionicModal, $filter, $ionicHistory){
         $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
 
         //Checking if username and password is saved
