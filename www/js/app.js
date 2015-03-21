@@ -18,16 +18,6 @@ angular.module('starter', ['ionic'])
         });
     $urlRouterProvider.otherwise('/expenseList');
 })
-.controller('ProtectedController', function($scope, $location, $ionicHistory){
-    if(window.localStorage.getItem("password") === "undefined" || window.localStorage.getItem("password") === null) {
-        $ionicHistory.nextViewOptions({
-            disableAnimate: true,
-            disableBack: true
-        });
-        $location.path("/login");
-    }
-    $scope.status = "Making it this far means you are signed in";
-})
 .controller('LoginController', function($scope, $location, $ionicHistory){
     $scope.login = function(username, password) {
         window.localStorage.setItem("username", username);
@@ -39,11 +29,15 @@ angular.module('starter', ['ionic'])
         $location.path("/protected");
     }
 })
-.controller('ExpenseController', function($scope, $http, $ionicModal, $filter, $ionicHistory){
+.controller('ExpenseController', function($scope, $http, $ionicModal, $filter, $ionicHistory, $location){
         $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
 
         //Checking if username and password is saved
-        if(window.localStorage.getItem("password") === "undefined" || window.localStorage.getItem("password") === null) {
+        var userName = window.localStorage.getItem("username");
+        var userPassword = window.localStorage.getItem("password");
+
+        console.log("Username:"+userName+" , password: "+userPassword);
+        if(userPassword === "undefined" || userPassword === null) {
             $ionicHistory.nextViewOptions({
                 disableAnimate: true,
                 disableBack: true
@@ -52,13 +46,13 @@ angular.module('starter', ['ionic'])
             $location.path("/login");
         }
 
-        if(window.localStorage.getItem("username") === "undefined" || window.localStorage.getItem("username") === null) {
+        if(userName === "undefined" || userName === null) {
             $ionicHistory.nextViewOptions({
                 disableAnimate: true,
                 disableBack: true
             });
-            $location.path("/login");
             console.log("No username is saved in local storage!");
+            $location.path("/login");
         }
 
         var urlHome = "http://projects.suniltimalsina.com";
